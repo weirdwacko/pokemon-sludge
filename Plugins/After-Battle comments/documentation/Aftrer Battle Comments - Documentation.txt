@@ -1,0 +1,117 @@
+Summary :
+I. Installation instructions
+II. Understanding the added scripts: Overview of the files.
+III. Adding dialogues: understanding the PBS file.
+IV.	Core scripts modifications
+===============================================================================================
+I. Instalation instructions
+
+-Drop the "After-Battle comments" folder in your plugin folder. Careful, this addon adds stuff to the savefile, so it will probably be incompatible with previous savefiles. I reccomend starting from a fresh file to mess with it.
+
+-I have included a test map to showcase the resource's capabilities. If you want to use it to test it out, you need to include the content of the "testing purposes" folder in your game in some way. Add the map file or rewrite one of yours you don't care about (the whole thing only uses essentials assets), and add the PBS files, or at least their content, to your game. 
+
+-The resource should have originally included a new type of PBS file to store the various reactions of the NPCs. However, since the plugin system doesn't play nice with that kind of thing, i've had to settle for moving the PBS file to an additionnal script. If you wish to re-enable the PBS file behavior by importing some of my modifications to your core script files, take a look at section IV.
+ 
+II. Understanding the added scripts: Overview of the files.
+
+So, let's have a look at the scripts that make up the meat of this resource. Most of these should have a more detailed step-by-step comments in
+them, so I'll stick to a general overview.
+It should look like this :
+0-PBSFileWorkaround
+001-ScriptOverrides
+002-BattleData
+003-ProcessFlags
+004-CharacterResponses
+005-SkipTeambuilding
+
+"0-PBSFileWorkardound" is what I had to resort to to bypass the compilator issues. Instead of adding a new PBS file with it's own structure that gets compiled like the rest, this one just dumps the entire text in a script in it's compilated format and call it a day. Right now, it contains the compilated version of the demo file I've included. Feel free to wipe it out and start clean, as unless you re-enable the PBS file behavior, this is where you'll be adding the reactions of the various NPCs you want to add.
+
+You'll want to escape all special characters inside the strings of this thing, (#,\,",',among others), and the structure is a hash of characters, storing a hash of messages, which are themselves an array of strings, one string for each in-game text prompt. Be sure not to trip yourself up with the formatting.
+
+example :
+{
+	"CHARACTER A" =>{
+		"FLAG A" =>["text prompt 1", "text prompt 2"],
+		"FLAG B" =>["text prompt A"]
+	},
+	"CHARACTER X" =>{
+		"FLAG G" =>["text prompt F"]
+	}
+
+}
+
+"001-ScriptOverrides" is where all of the overrides to existing functions, modules, classes and scripts of Essentials are located. You'll find a list below that goes more in detail in what changes I made. if you experiences other mod incompatibility problems, the culprit is probably one of those ovverides not playing nice with another mod. U
+
+"005-SkipTeambuilding" is simply a script to be called by a game event that quickly rebuilds a preset team for the player to use while experimenting with the demo map of the resource. It also enables debug mode. It serves no greater purpose to the script, and as such can safely be yeeted out.
+
+"002-BattleData" is where things get serious. This is the class where the data of each battle you choose to record will be stored. Mostly the player's team, the opponent's name and team, and some more specific variables. It also contains a bunch of functions that turn this data into meaningful information, such as calculating who was the MVP on both teams, checking whether or not you fought this trainer before that, comparing your current team to the one you had last time you fought them and drawing the necessary conclusions, determining whether or not you used items throughout the fight, and so on. This is the class where you should put calculations and operations that lead to returning or not a flag to later functions.
+
+"003-ProcessFlags" is where we take all those flags and call basically every single function of BattleData, take their result, and shove them into one big array of flags. We then compare this array to a list of flags it's given as parameters and returns a new array that's made of the intersection of the two arrays (i.e., flags that were present in both lists).
+
+The purpose of this is to let devs control more easily which flags even need to be sent to CharacterResponses, and to let the devs decide which flag should take priority over the other, as you simply need to touch up the list you pass as parameter to filter the data gathered by Battle_Data. It also serves the purpose of serving as a conditional branch in the rpgmaker event: if there's nothing to return, you don't have to call CharacterResponses and you can just move on to the next plot dialogue.
+
+Finally, "004-CharacterResponses" is where we call the data we gathered from our PBS file. After taking a character and a list of flags as arguments, it searches through the array to find the corresponding pair and prints the messages it finds in the array for this specific pair. There are a couple subtleties to it that we'll get to in a minute, but that's the gist of it. The rest is just treatments on the text to replace variables in the text by their actual values.
+
+===============================================================================================
+III. Adding dialogues: understanding the PBS file.
+Let's have a look at the file. Take a look at the PBS File Overlook.png that should be included in this folder.
+ 
+So, topdown explanation: 
+1)	#------------------- is how the code understands you're moving on to the next character reactions and must add his current object to the array. Insert it before moving on to the next character, and remember to add it at the end of the file.
+2)	The line immediately after the separator is what the code will understand as the name of the character to whom the subsequent flags and dialogs belong to. The names are what the function CharacterResponses searches with its first parameter, and you'll probably type it down manually in the event map, and is used nowhere else, so you don't have to worry about naming conventions or anything. Make a character entry named "Virizion_four_way_battle", for all I care.
+3)	The line after the character name, as well as the lines after a blank line are the names of the flag the dialogs corresponds. You can find more about the flags and what they mean in the flag description.txt, and I strongly encourage you to keep it up to date if you add new flags yourself to account for more options.
+Be careful with typos, as the game won't find the flag it'll be searching for if this happens.
+4)	Every line after the flag name until a blank line happens will be understood as a message it needs to print in-game. The code will print the text in-game as is, so you don't need to bother with quotes, escaping characters and other things like this, to the exception of special key words I'll get to in a minute. Every line break means a new message for the game, so structure your sentences and lines in a way they'll flow naturally from message to message.
+5)	The blank line after the messages is the function's way of understanding you're done with the content of the current flag and that we're advancing to the next flag + message block. Keep that in mind when adding content. After a line break, it'll use the next line as the name of the flag to which the subsequent messages will be attached. This also means that two successive line breaks can cause the function to crash, so be careful with it.
+The function will also just outright skip any line that starts with two # symbols, so you can just leave comments in the file for yourself if you need to that way without breaking the file structure.
+6)	When you call the CharacterResponses function (not to be mixed up with the function at compilation that's responsible for processing steps 1-5), it'll search for several variable names such as #{mvp_1} and replace them with data it collected from the last battle. For example, mvp_1 will be replaced as the name of the mon in the player team who did the heavy lifting in this fight. You can find the list of variable names in CharacterResponses.
+7)	Lines that are nothing but #{submessage} will be understood by the function as a request to load another message, corresponding to the next flag provided by the function, if a second flag is present, after which it'll return to print the remainder of the original message. This allows you to call a message within the message. If only one flag is found in the first place by the function, it'll simply ignore the line entirely. Basically, it lets you make a message sandwich. 
+8)	Finally, lines that begin with #CODE will be understood by CharacterResponses as lines it needs to run as code rather than as text to print. This allows you to perform specific operations such as rewarding the player by giving them an item if they perform very well during the fight, or having the character move around while talking. You can put several #CODE lines after each other if you need to run something like an if check.
+This uses the eval() function and will understood anything you give it as code, so make sure the code is doing exactly what you want it to do and nothing else.
+9)	No, seriously, remember to add the section separator at the end of the file. Trust me on this, you are going to spend a couple of tests wondering why the hell is your message not loading after getting the deired outcome in the battle, only to realize you forgot that line, which means the code didn't even processed it/didn't added it to the array.
+===============================================================================================
+IV.	Core scripts modifications
+Here, you'll find an overview of the ScriptOverride.rb file I made, with a numbered list of my additions to the code.
+
+Game_Save Values
+
+-Lines 120-127 - 1: this is where we add the array of recorded battles to the list of things to save, so the game can remember we still fought those people next time we load the game. (yeah, this DOES mean savefiles won't be compatible after you install this and will have to restart.)
+
+Battler_UseMove_TriggerEffects
+
+-Lines 61-65 - 2: After a move has connected to it's target, if a pokemon was fainted by it, we call one of our functions to process this action.
+
+PokeBattle_Battle
+	  
+-Lines 86-89 - 3: we add a couple of attributes to the class.
+-Lines 98-100 - 4: we redefine the constructor of the class, so we can sneak in a couple of attributes we're going to need to get passed on.
+-Lines 174-180 - 5: we initialize our additionnal attributes, and if it turns out that the battle must indeed be recorded, we call another of our functions to start building the battle record. 
+-Lines 189-202 - 6: this is our function that pass this current battle's data to our main script. Mostly, we pass the involved characters's teams and names.
+
+Battle_Action_UseItem
+
+-Lines 95-103, 121-129, 159-167 -7,8,9: in the three functions involving using items mid-battle, if the battle is recorded, call a function that tracks item usage.
+
+Overworld_BattleStarting
+
+-Lines 371-373 - 10 : we declare the partysizes variables early se we can call it later.
+-Lines 391-408 - 11: we add a case to the args parser if it receives a boolean, one that we'll have passed earlier to the function. If there is one and is true, than it's our signal to know we must record the battle. We'll have to pass this parameter to the function that calls the battle proper, but first we're rounding up some data about the respective battlers party size.
+-Lines 436-438 - 12 : we pass the paramters to the PokeBattle_Battle.new call.
+-Lines 473-476, 534-538, 554-559 - 13,15,17 : we edit the constructor of the three trainer battle functions to include our recorded attribute. We initialize it to false so it doesn't conflict with anything else in the code.
+-Lines 515-523, 544-549, 565-571 - 14,16,18 ! edit the call to pbTrainerBattleCore to include recorded to the list of paramters passed so it can pass it along to battle.new as shown in 11.
+
+###WARNING###
+The changes below have been commented out due to not working properly with the plugin feature, as they add a PBS file to the list of files to compile. In order to re-enable those modifications and make the resource work as intended, you'll need to paste this changes in their respective scripts. You can also not do that and keep going with the PBSFileWorkaround script I made. A lot of design choices I made for this probably make less sense if you're gonna make it a script instead, but it should still work, so it's your call.
+
+UI_Load
+
+-Lines 220-222 - 19 : we add the npcreactions.dat to the list of files to load while loading the game. I'm not actually sure it SHOULD be here anymore, I just know it used to and that it seems to be working so far.
+
+Compiler
+
+-Lines 728-731 - 20 : We add the message indicating we're currently compiling this PBS File
+-Lines 768-770 - 21 : We add npcreactions.dat to the list of files to create after compiling the PBS file
+-Lines 791-793 - 22 : Same deal as previously, except it's the text file this time.
+
+Compiler_CompilePBS
+-Lines 1610-1650 - 23 : Our custom compilation function for our PBS file.

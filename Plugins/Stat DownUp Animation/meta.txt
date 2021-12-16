@@ -1,0 +1,4 @@
+﻿Name      = Stat DownUp Animation (8 animations)
+Version   = 1.0
+Website   = https://github.com/Jack1324567/PE-Custom-Script
+Credits   = bo4p5687, LDEJRuff (graphics)

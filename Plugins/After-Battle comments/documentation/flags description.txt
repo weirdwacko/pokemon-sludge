@@ -1,0 +1,32 @@
+General state of the party after a battle :
+"CLOSE_CALL" : returned if less than three pokemons on the player team are still alive.
+"CURB_STOMP" : returned if at least four pokemons on the player team are still alive, except for conditions that would cause the 6-0 flag to be raised instead.
+"6-0" : returned if all pokemons of the player are still alive by the end of the battle, AND if no items were used by the player through the battle. Despite the name, the player can carry less than six pokemons and still get this flag if they meet the conditions.
+
+Finding a MVP :
+"MVP" : returned if at least one pokemon in the player's team has a score of three or more. The mvp is still calculated regardless. The purpose of this flag is to avoid raising calling the MVP-related dialogue if the team contributed pretty evenly to the battle/no one in particular really carried the battle. the conditions for it to be returned can easily be modified by fiddling with the isThereMVP function in BattleData script.
+
+Item usage-related flags :
+"NO_ITEMS" : returned if the player used no items throughout the battle.
+"LESS_ITEMS_THAN_OPPONENT" : returned if the player used items, but less than the AI did.
+"MORE_ITEMS_THAN_OPPONENT" : returned if the player used more items than the AI opponent.
+
+Rematch flags :
+"SAME_TEAM_SAME_MVP" : returned if at least four mons are the same since the last battle with that trainer, and the MVP was the same in both cases.
+"SAME_TEAM_DIFFERENT_MVP" : same as above, but the MVP is a different mon that was nonetheless present in the old battle too.
+"SAME_TEAM_NEW_MVP" : returned if at least four mons are the same since the last battle with that trainer, but the MVP is among the newly added pokemons.
+"NEW_TEAM_SAME_MVP" : returned if three or more pokemons are new since the last battle, but the MVP was the same mon as last time.
+"NEW_TEAM_DIFFERENT_MVP": same as above but the MVP isn't the same as last time BUT was also present during the previous battle
+"NEW_TEAM_NEW_MVP" : returned if the mvp is part of the newly added mons and the team has at least three new mons.
+
+Additionnal flags that can all be raised in a rematch battle simultaneously, save for those mutually exclusive for obvious reasons.
+"MVP_MEGA", : returned if the mvp holds a mega stone it didn't have in the previous battle.
+"MVP_EVOLVED" : returned if the mvp has evolved(their species has changed) since the previous battle.
+"MVP_Z_CRYSTAL" : returned if the mvp holds a z-crystal it didn't have in the previous battle.
+"OLD_MVP_DISAPPEARED" : returned if the mvp of the previous battle is no longer in the team.
+
+Msicleanneous flags
+"IDENTICAL_NICKNAMES" : returned if all mons in the player party share a single nickname.
+"MONOTYPE" : returned if all mons in the player party share a common type.
+"OUTNUMBERED": returned if the player's team contains less pokemons than the opponent
+"OUTNUMBERING": returned if the player's team contains more pokemons than the opponent

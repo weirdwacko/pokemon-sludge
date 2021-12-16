@@ -1,0 +1,4 @@
+Name = BW Save Screen
+Version = 1.1.0
+Credits = HDrawer (based on shiney570 script)
+Website = https://reliccastle.com/resources/460/

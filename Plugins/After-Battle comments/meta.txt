@@ -1,0 +1,4 @@
+Name         = After Battle NPC Commentary
+Version      = 1.0
+Website      = https://reliccastle.com/threads/????
+Credits      = Yumil

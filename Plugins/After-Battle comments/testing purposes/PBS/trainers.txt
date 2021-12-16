@@ -1,0 +1,587 @@
+﻿# See the documentation on the wiki to learn how to edit this file.
+#-------------------------------
+[CAMPER,Liam]
+LoseText = "A very good battle, indeed!"
+Pokemon = DIGLETT,10
+Pokemon = BONSLY,11
+#-------------------------------
+[LEADER_Brock,Brock]
+Items = FULLRESTORE,FULLRESTORE
+LoseText = "Very good."
+Pokemon = GEODUDE,12
+    Gender = male
+    Moves = DEFENSECURL,HEADSMASH,ROCKPOLISH,ROCKTHROW
+    AbilityIndex = 0
+    IV = 20,20,20,20,20,20
+Pokemon = ONIX,14
+    Name = Rocky
+    Gender = male
+    Shiny = yes
+    Moves = HEADSMASH,ROCKTHROW,RAGE,ROCKTOMB
+    AbilityIndex = 0
+    Item = SITRUSBERRY
+    IV = 20,20,20,20,20,20
+    Ball = HEAVYBALL
+#-------------------------------
+[TEAMROCKET_M,Grunt,1]
+LoseText = "You're too good for me!"
+Pokemon = WEEPINBELL,21
+    Shadow = yes
+#-------------------------------
+[TEAMROCKET_F,Grunt,1]
+LoseText = "You're too good for me!"
+Pokemon = BURMY,19
+Pokemon = WINGULL,19
+Pokemon = ELECTABUZZ,20
+    Shadow = yes
+#-------------------------------
+[YOUNGSTER,Ben]
+LoseText = "Aww, I lost."
+Pokemon = RATTATA,11
+Pokemon = EKANS,11
+#-------------------------------
+[CAMPER,Jeff]
+LoseText = "A very good battle, indeed!"
+Pokemon = SPEAROW,16
+Pokemon = SENTRET,16
+#-------------------------------
+[CAMPER,Jeff,1]
+LoseText = "You beat me again!"
+Pokemon = FEAROW,29
+Pokemon = FURRET,29
+#-------------------------------
+[PICNICKER,Susie]
+LoseText = "Defeated! Oh my!"
+Pokemon = MEOWTH,18
+#-------------------------------
+[PICNICKER,Susie,1]
+LoseText = "Defeated! Oh my!"
+Pokemon = PERSIAN,32
+#-------------------------------
+[HIKER,Ford]
+LoseText = "You're too good for me!"
+Pokemon = MACHOP,19
+#-------------------------------
+[FISHERMAN,Andrew]
+LoseText = "Washed out!"
+Pokemon = MAGIKARP,14
+Pokemon = MAGIKARP,18
+#-------------------------------
+[BEAUTY,Bridget]
+LoseText = "My Skitty!"
+Pokemon = SKITTY,18
+#-------------------------------
+[LASS,Crissy]
+LoseText = "You didn't have to win so convincingly!"
+Pokemon = PLUSLE,17
+Pokemon = MINUN,17
+#-------------------------------
+[COOLCOUPLE,Alice & Bob]
+LoseText = "Our teamwork failed!"
+Pokemon = TURTWIG,19
+Pokemon = CHIMCHAR,19
+#-------------------------------
+[POKEMONTRAINER_Brendan,Brendan]
+LoseText = "..."
+Pokemon = MARSHTOMP,19
+#-------------------------------
+[SWIMMER2_F,Ariel]
+LoseText = "Washed out!"
+Pokemon = STARYU,15
+Pokemon = GOLDEEN,11
+#-------------------------------
+[RIVAL1,Blue]
+LoseText = "Not too shabby."
+Pokemon = PIDGEOTTO,17
+Pokemon = RATTATA,15
+Pokemon = BULBASAUR,18
+#-------------------------------
+[RIVAL1,Blue,1]
+LoseText = "Not too shabby."
+Pokemon = PIDGEOTTO,17
+Pokemon = RATTATA,15
+Pokemon = CHARMANDER,18
+#-------------------------------
+[RIVAL1,Blue,2]
+LoseText = "Not too shabby."
+Pokemon = PIDGEOTTO,17
+Pokemon = RATTATA,15
+Pokemon = SQUIRTLE,18
+#-------------------------------
+[CHAMPION,Blue]
+LoseText = "A good battle indeed!"
+Pokemon = VENUSAUR,63
+    Item = SITRUSBERRY
+Pokemon = CHARIZARD,63
+    Item = SITRUSBERRY
+Pokemon = BLASTOISE,63
+    Item = SITRUSBERRY
+#-------------------------------
+[LASS,Lily]
+Items = MAXPOTION,MAXPOTION
+LoseText = "Good battle!"
+Pokemon = FROSLASS,66
+	Item = FOCUSSASH
+	Moves = SHADOWBALL,ICEBEAM,LIGHTSCREEN,THUNDERWAVE,
+	AbilityIndex = 1
+	Gender = female
+	Nature = TIMID
+	IV = 31,31,31,31,31,31
+	EV = 128,0,0,252,128,0
+	Happiness = 255	
+Pokemon = NINETALES,66
+	Item = LEFTOVERS
+	Moves = WILLOWISP,HEATWAVE,OMINOUSWIND,SUBSTITUTE
+	AbilityIndex = 2
+	Gender = female
+	Nature = CALM
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,0,0,192,64,0
+Pokemon = GARCHOMP,67
+	Item = ASSAULTVEST
+	Moves = EARTHQUAKE,DRAGONCLAW,POISONJAB,ROCKSLIDE
+	AbilityIndex = 1
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+Pokemon = EXCADRILL,67
+	Moves = IRONHEAD,HONECLAWS,EARTHQUAKE,SHADOWCLAW
+	AbilityIndex = 2
+	Gender = female
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,248,0,8
+Pokemon = MELOETTA,67
+	Item = WISEGLASSES
+	Moves = SHADOWBALL,PSYCHIC,HYPERVOICE,FOCUSBLAST
+	AbilityIndex = 0
+	Gender = female
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 124,0,0,252,132,0
+Pokemon = UMBREON,68
+	Moves = DARKPULSE,PSYSHOCK,MOONLIGHT,MOONBLAST
+	AbilityIndex = 0
+	Gender = female
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,0,0,0,252,4
+#-------------------------------
+[CUEBALL,Connie]
+Items = MAXPOTION,MAXPOTION
+LoseText = "So, how many items does that make ?"
+Pokemon = NINETALES,66
+	Item = HEATROCK,
+	Moves = WILLOWISP,SOLARBEAM,HEATWAVE,ROAR
+	AbilityIndex = 2
+	Gender = female
+	Nature = CALM
+	IV = 31,31,31,31,31,31
+	EV = 128,0,0,0,128,252
+	Happiness = 255	
+Pokemon = INCINEROAR,66
+	Item = EXPERTBELT
+	Moves = FAKEOUT,LEECHLIFE,DARKESTLARIAT,FLAREBLITZ
+	AbilityIndex = 2
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,252,0,0,0,4
+Pokemon = EMBOAR,68
+	Item = LEFTOVERS
+	Moves = FLAREBLITZ,WILDCHARGE,SUPERPOWER,IRONHEAD
+	AbilityIndex = 2
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+Pokemon = MAGMORTAR,68
+	Item = ASSAULTVEST
+	Moves = FLAMETHROWER,PSYCHIC,THUNDERBOLT,SOLARBEAM
+	AbilityIndex = 0
+	Gender = female
+	Nature = CALM
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 248,0,0,0,248,12
+Pokemon = ARCANINE,67
+	Moves = SUBSTITUTE,MORNINGSUN,OVERHEAT,WILDCHARGE
+	AbilityIndex = 1
+	Gender = female
+	Nature = MILD
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 132,0,0,0,248,128
+Pokemon = TALONFLAME,69
+	Item = SHARPBEAK
+	Moves = BRAVEBIRD,ROOST,FLAREBLITZ,TAILWIND
+	AbilityIndex = 1
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+#-------------------------------
+[HIKER,Gary]
+Items = MAXPOTION
+LoseText = "And now, for the result..."
+Pokemon = MIENSHAO,66
+	Item = LIFEORB,
+	Moves = UTURN,KNOCKOFF,BRICKBREAK,POISONJAB
+	AbilityIndex = 1
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	EV = 0,252,0,252,0,4
+	Happiness = 255	
+Pokemon = INFERNAPE,68
+	Item = WHITEHERB
+	Moves = GRASSKNOT,OVERHEAT,WILLOWISP,UTURN
+	AbilityIndex = 0
+	Gender = male
+	Nature = NAIVE
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,0,4,252,252,0
+Pokemon = HITMONTOP,66
+	Item = LEFTOVERS
+	Moves = PURSUIT,FAKEOUT,CLOSECOMBAT,PROTECT
+	AbilityIndex = 0
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,248,0,0,0,8
+Pokemon = CONKELDURR,68
+	Item = PAYAPABERRY
+	Moves = DRAINPUNCH,KNOCKOFF,POISONJAB,THUNDERPUNCH
+	AbilityIndex = 2
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,252,0,0,0,4
+Pokemon = SCRAFTY,67
+	Moves = BULKUP,BRICKBREAK,CRUNCH,IRONHEAD
+	AbilityIndex = 1
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+Pokemon = LUCARIO,69
+	Item = LUCARIONITE
+	Moves = ICEPUNCH,CLOSECOMBAT,EXTREMESPEED,METEORMASH
+	AbilityIndex = 0
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,248,0,8
+#-------------------------------
+[COOLTRAINER_F,Amelie]
+Items = MAXPOTION
+LoseText = "Alright then."
+Pokemon = CROBAT,66
+	Item = BLACKSLUDGE,
+	Moves = UTURN,TOXIC,SLUDGEBOMB,ROOST
+	AbilityIndex = 1
+	Gender = female
+	Nature = HASTY
+	IV = 31,31,31,31,31,31
+	EV = 252,0,0,252,4,0
+	Happiness = 255	
+Pokemon = MILOTIC,67
+	Item = WIKIBERRY
+	Moves = SCALD,ICEBEAM,HAZE,RECOVER
+	AbilityIndex = 1
+	Gender = female
+	Nature = CALM
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,0,0,0,4,252
+Pokemon = LYCANROC,68
+	Item = CHOPLEBERRY
+	Moves = STONEEDGE,THUNDERPUNCH,ZENHEADBUTT,BULKUP
+	AbilityIndex = 2
+	Gender = female
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,252,0,4,0,0
+Pokemon = CACTURNE,66
+	Item = BIGROOT
+	Moves = INGRAIN,GIGADRAIN,DARKPULSE,LEECHSEED
+	AbilityIndex = 1
+	Gender = male
+	Nature = CALM
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 8,0,0,0,248,252
+Pokemon = ZANGOOSE,68
+	Item= TOXICORB
+	Moves = FACADE,CLOSECOMBAT,KNOCKOFF,PROTECT
+	AbilityIndex = 1
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 4,252,0,252,0,0
+Pokemon = BLAZIKEN,69
+	Item = BLAZIKENITE
+	Moves = FLAREBLITZ,BRICKBREAK,THUNDERPUNCH,PROTECT
+	AbilityIndex = 0
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 4,252,0,252,0,0
+#-------------------------------
+[GENTLEMAN,Shinichi]
+Items = MAXPOTION
+LoseText = "Good work."
+Pokemon = AIPOM,69
+	Item = LIFEORB,
+	Moves = TAILSLAP,FAKEOUT,SHADOWCLAW,UTURN
+	AbilityIndex = 2
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	EV = 0,252,0,248,0,8
+	Happiness = 255	
+Pokemon = ROSERADE,66
+	Item = BLACKSLUDGE
+	Moves = GIGADRAIN,TOXICSPIKES,NATUREPOWER,SLUDGEBOMB
+	AbilityIndex = 2
+	Gender = male
+	Nature = TIMID
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,0,4,252,252,0
+Pokemon = CHARIZARD,66
+	Item = CHARIZARDITEX
+	Moves = DRAGONDANCE,THUNDERPUNCH,DRAGONCLAW,FLAREBLITZ
+	AbilityIndex = 0
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,248,8,0,0,0
+Pokemon = WEAVILE,65
+	Item = FOCUSSASH
+	Moves = NIGHTSLASH,ICICLECRASH,LOWKICK,KNOCKOFF
+	AbilityIndex = 0
+	Gender = female
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+Pokemon = METAGROSS,65
+	Item= ASSAULTVEST
+	Moves = ICEPUNCH,EARTHQUAKE,ZENHEADBUTT,IRONHEAD
+	AbilityIndex = 0
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,248,0,0,0,8
+Pokemon = GYARADOS,65
+	Item = LEFTOVERS
+	Moves = WATERFALL,SUBSTITUTE,STONEEDGE,EARTHQUAKE
+	AbilityIndex = 0
+	Gender = male
+	Nature = IMPISH
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,132,124,0,0,0
+#-------------------------------
+[POKEMONRANGER_F,Adria]
+Items = MAXPOTION
+LoseText = "Good work."
+Pokemon = ARCHEOPS,65
+	Item = FLYINGGEM,
+	Moves = ACROBATICS,ROCKSLIDE,EARTHQUAKE,CUT
+	AbilityIndex = 0
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	EV = 4,252,0,252,0,0
+	Happiness = 255	
+Pokemon = XATU,64
+	Item = LEFTOVERS
+	Moves = WISH,PSYCHIC,AIRSLASH,TAILWIND
+	AbilityIndex = 2
+	Gender = female
+	Nature = BOLD
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,0,252,0,4,0
+Pokemon = GLISCOR,65
+	Item = TOXICORB
+	Moves = EARTHQUAKE,TAILWIND,STONEEDGE,CUT
+	AbilityIndex = 2
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,252,4,0,0,0
+Pokemon = HONCHKROW,66
+	Item = POWERHERB
+	Moves = SUCKERPUNCH,SKYATTACK,SUPERPOWER,TAUNT
+	AbilityIndex = 2
+	Gender = female
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 4,252,0,252,0,0
+Pokemon = PIDGEOT,66
+	Item= PIDGEOTITE
+	Moves = HURRICANE,HEATWAVE,SUBSTITUTE,ROOST
+	AbilityIndex = 0
+	Gender = male
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,0,0,252,248,4
+Pokemon = VIRIZION,67
+	Item = COBABERRY
+	Moves = SEEDBOMB,SACREDSWORD,STONEEDGE,SYNTHESIS
+	AbilityIndex = 0
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 132,252,0,124,0,0
+#-------------------------------
+[BURGLAR,Arin]
+Items = LEFTOVERS
+LoseText = "Good work."
+Pokemon = ARCANINE,61
+	Item = LEFTOVERS,
+	Moves = WILLOWISP,WILDCHARGE,HEATWAVE,MORNINGSUN
+	AbilityIndex = 0
+	Gender = male
+	Nature = GENTLE
+	IV = 31,31,31,31,31,31
+	EV = 4,252,0,252,0,0
+	Happiness = 255	
+Pokemon = TYRANITAR,62
+	Item = SCOPELENS
+	Moves = ICEBEAM,THUNDERBOLT,STONEEDGE,CRUNCH
+	AbilityIndex = 0
+	Gender = female
+	Nature = QUIET
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,128,0,0,128,0
+Pokemon = SILVALLY,61
+	Item = WATERMEMORY
+	Moves = UTURN,THUNDERBOLT,MULTIATTACK,FLASHCANNON
+	AbilityIndex = 0
+	Gender = male
+	Nature = GENTLE
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,128,0,0,128,0
+Pokemon = KROOKODILE,62
+	Item = EXPERTBELT
+	Moves = EARTHQUAKE,BRICKBREAK,KNOCKOFF,THUNDERFANG
+	AbilityIndex = 2
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 156,252,100,0,0,0
+Pokemon = SCIZOR,62
+	Item= FOCUSSASH
+	Moves = XSCISSOR,BULLETPUNCH,SWORDSDANCE,IRONHEAD
+	AbilityIndex = 1
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,0,0,252,248,4
+Pokemon = GALLADE,63
+	Item = GALLADITE
+	Moves = PSYCHOCUT,CLOSECOMBAT,SHADOWSNEAK,ICEPUNCH
+	AbilityIndex = 0
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+#-------------------------------
+[GENTLEMAN,Shinichi,1]
+Items = MAXPOTION
+LoseText = "Good work."
+Pokemon = CHARIZARD,66
+	Item = CHARIZARDITEX
+	Moves = DRAGONDANCE,THUNDERPUNCH,DRAGONCLAW,FLAREBLITZ
+	AbilityIndex = 0
+	Gender = female
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,248,8,0,0,0
+Pokemon = GYARADOS,65
+	Item = LEFTOVERS
+	Moves = WATERFALL,SUBSTITUTE,STONEEDGE,EARTHQUAKE
+	AbilityIndex = 0
+	Gender = male
+	Nature = IMPISH
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 252,132,124,0,0,0
+#-------------------------------
+[POKEMONRANGER_F,Adria,1]
+Items = MAXPOTION
+LoseText = "Good work."
+Pokemon = PIDGEOT,66
+	Item= PIDGEOTITE
+	Moves = HURRICANE,HEATWAVE,SUBSTITUTE,ROOST
+	AbilityIndex = 0
+	Gender = male
+	Nature = MODEST
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,0,0,252,248,4
+Pokemon = VIRIZION,67
+	Item = COBABERRY
+	Moves = SEEDBOMB,SACREDSWORD,STONEEDGE,SYNTHESIS
+	AbilityIndex = 0
+	Gender = male
+	Nature = JOLLY
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 132,252,0,124,0,0
+#-------------------------------
+[BURGLAR,Arin,1]
+Items = LEFTOVERS
+LoseText = "Good work."
+Pokemon = SCIZOR,62
+	Item= FOCUSSASH
+	Moves = XSCISSOR,BULLETPUNCH,SWORDSDANCE,IRONHEAD
+	AbilityIndex = 1
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,0,0,252,248,4
+Pokemon = GALLADE,63
+	Item = GALLADITE
+	Moves = PSYCHOCUT,CLOSECOMBAT,SHADOWSNEAK,ICEPUNCH
+	AbilityIndex = 0
+	Gender = male
+	Nature = ADAMANT
+	IV = 31,31,31,31,31,31
+	Happiness = 255	
+	EV = 0,252,0,252,0,4
+#-------------------------------
