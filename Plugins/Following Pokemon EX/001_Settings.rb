@@ -16,7 +16,7 @@ module FollowerSettings
 
   # The key the player needs to press to toggle followers. Set this to nil if
   # you want to disable this feature. (:JUMPUP is the A key by default)
-  TOGGLE_FOLLOWER_KEY = :JUMPUP
+  TOGGLE_FOLLOWER_KEY = nil
 
   # The key the player needs to press to quickly cycle through their party. Set
   # this to nil if you want to disable this feature
