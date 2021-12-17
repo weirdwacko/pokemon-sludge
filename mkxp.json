@@ -39,7 +39,7 @@
     // Game window is resizable
     // (default: enabled)
     //
-    "winResizable": true,
+    // "winResizable": true,
 
 
     // Start game in fullscreen (this can
@@ -60,7 +60,7 @@
     // is upscaled
     // (default: disabled)
     //
-     "smoothScaling": true,
+    // "smoothScaling": false,
 
 
     // Sync screen redraws to the monitor refresh rate
@@ -75,7 +75,7 @@
     // in RGSS2 or higher).
     // (default: 0)
     //
-    "defScreenW": 1024,
+    "defScreenW": 512,
 
 
     // Specify the window height on startup. If set to 0,
@@ -84,13 +84,13 @@
     // in RGSS2 or higher).
     // (default: 0)
     //
-    "defScreenH": 576,
+    "defScreenH": 384,
 
 
     // Override the game window title
     // (default: none)
     //
-    "windowTitle": "Pokemon Sludge Version",
+    // "windowTitle": "Custom Title",
 
 
     // Enforce a static frame rate
@@ -132,7 +132,7 @@
     // tileset doesn't render at all
     // (default: disabled)
     //
-    "subImageFix": true,
+    // "subImageFix": false,
 
 
     // Enable framebuffer blitting if the driver is
@@ -141,7 +141,7 @@
     // disabling it can be used as a workaround
     // (default: enabled)
     //
-    "enableBlitting": false,
+    // "enableBlitting": true,
 
 
     // Limit the maximum size (width, height) of
@@ -171,7 +171,7 @@
     // Enable F12 game reset
     // (default: enabled)
     //
-    "enableReset": true,
+    // "enableReset": true,
 
 
     // Names of the input buttons in the F1 key bindings
@@ -360,6 +360,6 @@
     // "Game.rgssad", but specifying the executable name here
     // is a tiny bit less intrusive.
     //
-    "execName": "Pokemon Sludge Version"
+    // "execName": "Game"
 
 }

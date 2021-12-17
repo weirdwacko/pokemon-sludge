@@ -1,67 +1,10 @@
-#===========GELANAME0===========
-OFFSET_NAMEWINDOW_X=0
-OFFSET_NAMEWINDOW_Y=0
-# Name of namebox file is nmbx. Simply add Gela's Namebox Graphic from his original resource into your #windowskins folder, and name it "nmbx".
-#===========GELANAME0===========		
-										 
-#===============================================================================
-# Message variables
-#===============================================================================
-class Game_Temp
-  attr_accessor :background
-  attr_writer :message_window_showing
-  attr_writer :player_transferring
-  attr_writer :transition_processing
-
-  def message_window_showing
-    return @message_window_showing || false
-  end
-
-  def player_transferring
-    return @player_transferring || false
-  end
-
-  def transition_processing
-    return @transition_processing || false
-  end
-end
-
-
-
-class Game_Message
-  attr_writer :background
-  attr_writer :visible
-
-  def visible
-    return @visible || false
-  end
-
-  def background
-    return @background || 0
-  end
-end
-
-
-
-class Game_System
-  attr_writer :message_position
-
-  def message_position
-    return @message_position || 2
-  end
-end
-
-
-
 #===============================================================================
 #
 #===============================================================================
 class Scene_Map
   def updatemini
     oldmws=$game_temp.message_window_showing
-    oldvis=$game_message ? $game_message.visible : false
     $game_temp.message_window_showing=true
-    $game_message.visible=true if $game_message
     loop do
       $game_map.update
       $game_player.update
@@ -76,7 +19,6 @@ class Scene_Map
       break if $game_temp.transition_processing
     end
     $game_temp.message_window_showing=oldmws
-    $game_message.visible=oldvis if $game_message
     @spriteset.update if @spriteset
     @message_window.update if @message_window
   end
@@ -89,10 +31,6 @@ class Scene_Battle
     if self.respond_to?("update_basic")
       update_basic(true)
       update_info_viewport                  # Update information viewport
-      if $game_message && $game_message.visible
-        @info_viewport.visible = false
-        @message_window.visible = true
-      end
     else
       oldmws=$game_temp.message_window_showing
       $game_temp.message_window_showing=true
@@ -104,7 +42,7 @@ class Scene_Battle
         $game_map.screen.update
       end
       # If timer has reached 0
-      if $game_system.timer_working and $game_system.timer == 0
+      if $game_system.timer_working && $game_system.timer == 0
         # Abort battle
         $game_temp.battle_abort = true
       end
@@ -161,8 +99,6 @@ def pbUpdateSceneMap
   end
 end
 
-
-
 #===============================================================================
 #
 #===============================================================================
@@ -193,450 +129,6 @@ def pbCurrentEventCommentInput(elements,trigger)
   event = pbMapInterpreter.get_character(0)
   return nil if !event
   return pbEventCommentInput(event,elements,trigger)
-end
-
-def pbButtonInputProcessing(variableNumber=0,timeoutFrames=0)
-  ret=0
-  timeoutFrames = timeoutFrames*Graphics.frame_rate/20
-  loop do
-    Graphics.update
-    Input.update
-    pbUpdateSceneMap
-    for i in 1..18
-      ret=i if Input.trigger?(i)
-    end
-    break if ret!=0
-    if timeoutFrames>0
-      i+=1
-      break if i>=timeoutFrames
-    end
-  end
-  Input.update
-  if variableNumber && variableNumber>0
-    $game_variables[variableNumber]=ret
-    $game_map.need_refresh = true if $game_map
-  end
-  return ret
-end
-
-
-
-#===============================================================================
-# Interpreter functions for displaying messages
-#===============================================================================
-module InterpreterMixin
-  # Freezes all events on the map (for use at the beginning of common events)
-  def pbGlobalLock
-    for event in $game_map.events.values
-      event.minilock
-    end
-  end
-
-  # Unfreezes all events on the map (for use at the end of common events)
-  def pbGlobalUnlock
-    for event in $game_map.events.values
-      event.unlock
-    end
-  end
-
-  def pbRepeatAbove(index)
-    index=@list[index].indent
-    loop do
-      index-=1
-      return index+1 if @list[index].indent==indent
-    end
-  end
-
-  def pbBreakLoop(index)
-    indent = @list[index].indent
-    temp_index=index
-    # Copy index to temporary variables
-    loop do
-      # Advance index
-      temp_index += 1
-      # If a fitting loop was not found
-      return index+1 if temp_index >= @list.size-1
-      return temp_index+1 if @list[temp_index].code == 413 and
-                             @list[temp_index].indent < indent
-    end
-  end
-
-  def pbJumpToLabel(index,label_name)
-    temp_index = 0
-    loop do
-      return index+1 if temp_index >= @list.size-1
-      return temp_index+1 if @list[temp_index].code == 118 and
-                             @list[temp_index].parameters[0] == label_name
-      temp_index += 1
-    end
-  end
-
-  # Gets the next index in the interpreter, ignoring
-  # certain events between messages
-  def pbNextIndex(index)
-    return -1 if !@list || @list.length==0
-    i=index+1
-    loop do
-      return i if i>=@list.length-1
-      case @list[i].code
-      when 118, 108, 408   # Label, Comment
-        i+=1
-      when 413             # Repeat Above
-        i=pbRepeatAbove(i)
-      when 113             # Break Loop
-        i=pbBreakLoop(i)
-      when 119             # Jump to Label
-        newI=pbJumpToLabel(i,@list[i].parameters[0])
-        i = (newI>i) ? newI : i+1
-      else
-        return i
-      end
-    end
-  end
-
-  # Helper function that shows a picture in a script.  To be used in
-  # a script event command.
-  def pbShowPicture(number,name,origin,x,y,zoomX=100,zoomY=100,opacity=255,blendType=0)
-    number = number + ($game_temp.in_battle ? 50 : 0)
-    $game_screen.pictures[number].show(name,origin,
-       x, y, zoomX,zoomY,opacity,blendType)
-  end
-
-  # Erases an event and adds it to the list of erased events so that
-  # it can stay erased when the game is saved then loaded again.  To be used in
-  # a script event command.
-  def pbEraseThisEvent
-    if $game_map.events[@event_id]
-      $game_map.events[@event_id].erase
-      $PokemonMap.addErasedEvent(@event_id) if $PokemonMap
-    end
-    @index+=1
-    return true
-  end
-
-  # Runs a common event.  To be used in a script event command.
-  def pbCommonEvent(id)
-    common_event = $data_common_events[id]
-    if $game_temp.in_battle
-      if common_event != nil
-        interp = Interpreter.new
-        interp.setup(common_event.list,0)
-        loop do
-          Graphics.update
-          Input.update
-          interp.update
-          pbUpdateSceneMap
-          break if !interp.running?
-        end
-      end
-    else
-      $game_system.battle_interpreter.setup(common_event.list, 0)
-    end
-  end
-
-  # Sets another event's self switch (eg. pbSetSelfSwitch(20,"A",true) ).
-  # To be used in a script event command.
-  def pbSetSelfSwitch(event,swtch,value,mapid=-1)
-    mapid = @map_id if mapid<0
-    oldValue = $game_self_switches[[mapid,event,swtch]]
-    $game_self_switches[[mapid,event,swtch]] = value
-    if value!=oldValue && $MapFactory.hasMap?(mapid)
-      $MapFactory.getMap(mapid,false).need_refresh = true
-    end
-  end
-
-  # Must use this approach to share the methods because the methods already
-  # defined in a class override those defined in an included module
-  CustomEventCommands=<<_END_
-
-  def command_242
-    pbBGMFade(pbParams[0])
-    return true
-  end
-
-  def command_246
-    pbBGSFade(pbParams[0])
-    return true
-  end
-
-  def command_251
-    pbSEStop
-    return true
-  end
-
-  def command_241
-    pbBGMPlay(pbParams[0])
-    return true
-  end
-
-  def command_245
-    pbBGSPlay(pbParams[0])
-    return true
-  end
-
-  def command_249
-    pbMEPlay(pbParams[0])
-    return true
-  end
-
-  def command_250
-    pbSEPlay(pbParams[0])
-    return true
-  end
-_END_
-end
-
-
-
-class Game_Interpreter   # Used by RMVX
-  include InterpreterMixin
-  eval(InterpreterMixin::CustomEventCommands)
-  @@immediateDisplayAfterWait=false
-  @buttonInput=false
-
-  def pbParams
-    return @params
-  end
-
-  def command_105
-    return false if @buttonInput
-    @buttonInput=true
-    pbButtonInputProcessing(@list[@index].parameters[0])
-    @buttonInput=false
-    @index+=1
-    return true
-  end
-
-  def command_101
-    if $game_temp.message_window_showing
-      return false
-    end
-    $game_message=Game_Message.new if !$game_message
-    message=""
-    commands=nil
-    numInputVar=nil
-    numInputDigitsMax=nil
-    text=""
-    facename=@list[@index].parameters[0]
-    faceindex=@list[@index].parameters[1]
-    if facename && facename!=""
-      text+="\\ff[#{facename},#{faceindex}]"
-    end
-    if $game_message
-      $game_message.background=@list[@index].parameters[2]
-    end
-    $game_system.message_position=@list[@index].parameters[3]
-    message+=text
-    messageend=""
-    loop do
-      nextIndex=pbNextIndex(@index)
-      code=@list[nextIndex].code
-      if code == 401
-        text=@list[nextIndex].parameters[0]
-        text+=" " if text!="" && text[text.length-1,1]!=" "
-        message+=text
-        @index=nextIndex
-      else
-        if code == 102
-          commands=@list[nextIndex].parameters
-          @index=nextIndex
-        elsif code == 106 && @@immediateDisplayAfterWait
-          params=@list[nextIndex].parameters
-          if params[0]<=10
-            nextcode=@list[nextIndex+1].code
-            if nextcode==101||nextcode==102||nextcode==103
-              @index=nextIndex
-            else
-              break
-            end
-          else
-            break
-          end
-        elsif code == 103
-          numInputVar=@list[nextIndex].parameters[0]
-          numInputDigitsMax=@list[nextIndex].parameters[1]
-          @index=nextIndex
-        elsif code == 101
-          messageend="\1"
-        end
-        break
-      end
-    end
-    message=_MAPINTL($game_map.map_id,message)
-    @message_waiting=true
-    if commands
-      cmdlist=[]
-      for cmd in commands[0]
-        cmdlist.push(_MAPINTL($game_map.map_id,cmd))
-      end
-      command=pbMessage(message+messageend,cmdlist,commands[1])
-      @branch[@list[@index].indent] = command
-    elsif numInputVar
-      params=ChooseNumberParams.new
-      params.setMaxDigits(numInputDigitsMax)
-      params.setDefaultValue($game_variables[numInputVar])
-      $game_variables[numInputVar]=pbMessageChooseNumber(message+messageend,params)
-      $game_map.need_refresh = true if $game_map
-    else
-      pbMessage(message+messageend)
-    end
-    @message_waiting=false
-    return true
-  end
-
-  def command_102
-    @message_waiting=true
-    command=pbShowCommands(nil,@list[@index].parameters[0],@list[@index].parameters[1])
-    @message_waiting=false
-    @branch[@list[@index].indent] = command
-    Input.update # Must call Input.update again to avoid extra triggers
-    return true
-  end
-
-  def command_103
-    varnumber=@list[@index].parameters[0]
-    @message_waiting=true
-    params=ChooseNumberParams.new
-    params.setMaxDigits(@list[@index].parameters[1])
-    params.setDefaultValue($game_variables[varnumber])
-    $game_variables[varnumber]=pbChooseNumber(nil,params)
-    $game_map.need_refresh = true if $game_map
-    @message_waiting=false
-    return true
-  end
-end
-
-
-
-class Interpreter   # Used by RMXP
-  include InterpreterMixin
-  eval(InterpreterMixin::CustomEventCommands)
-  @@immediateDisplayAfterWait=false
-  @buttonInput=false
-
-  def pbParams
-    return @parameters
-  end
-
-  def command_105
-    return false if @buttonInput
-    @buttonInput=true
-    pbButtonInputProcessing(@list[@index].parameters[0])
-    @buttonInput=false
-    @index+=1
-    return true
-  end
-
-  def command_101
-    if $game_temp.message_window_showing
-      return false
-    end
-    message=""
-    commands=nil
-    numInputVar=nil
-    numInputDigitsMax=nil
-    text=""
-    firstText=nil
-    if @list[@index].parameters.length==1
-      text+=@list[@index].parameters[0]
-      firstText=@list[@index].parameters[0]
-      text+=" " if text[text.length-1,1]!=" "
-      message+=text
-    else
-      facename=@list[@index].parameters[0]
-      faceindex=@list[@index].parameters[1]
-      if facename && facename!=""
-        text+="\\ff[#{facename},#{faceindex}]"
-        message+=text
-      end
-    end
-    messageend=""
-    loop do
-      nextIndex=pbNextIndex(@index)
-      code=@list[nextIndex].code
-      if code == 401
-        text=@list[nextIndex].parameters[0]
-        text+=" " if text[text.length-1,1]!=" "
-        message+=text
-        @index=nextIndex
-      else
-        if code == 102
-          commands=@list[nextIndex].parameters
-          @index=nextIndex
-        elsif code == 106 && @@immediateDisplayAfterWait
-          params=@list[nextIndex].parameters
-          if params[0]<=10
-            nextcode=@list[nextIndex+1].code
-            if nextcode==101 || nextcode==102 || nextcode==103
-              @index=nextIndex
-            else
-              break
-            end
-          else
-            break
-          end
-        elsif code == 103
-          numInputVar=@list[nextIndex].parameters[0]
-          numInputDigitsMax=@list[nextIndex].parameters[1]
-          @index=nextIndex
-        elsif code == 101
-          if @list[@index].parameters.length==1
-            text=@list[@index].parameters[0]
-            if text[/\A\\ignr/] && text==firstText
-              text+=" " if text[text.length-1,1]!=" "
-              message+=text
-              @index=nextIndex
-              continue
-            end
-          end
-          messageend="\1"
-        end
-        break
-      end
-    end
-    @message_waiting=true # needed to allow parallel process events to work while
-                          # a message is displayed
-    message=_MAPINTL($game_map.map_id,message)
-    if commands
-      cmdlist=[]
-      for cmd in commands[0]
-        cmdlist.push(_MAPINTL($game_map.map_id,cmd))
-      end
-      command=pbMessage(message+messageend,cmdlist,commands[1])
-      @branch[@list[@index].indent] = command
-    elsif numInputVar
-      params=ChooseNumberParams.new
-      params.setMaxDigits(numInputDigitsMax)
-      params.setDefaultValue($game_variables[numInputVar])
-      $game_variables[numInputVar]=pbMessageChooseNumber(message+messageend,params)
-      $game_map.need_refresh = true if $game_map
-    else
-      pbMessage(message+messageend,nil)
-    end
-    @message_waiting=false
-    return true
-  end
-
-  def command_102
-    @message_waiting=true
-    command=pbShowCommands(nil,@list[@index].parameters[0],@list[@index].parameters[1])
-    @message_waiting=false
-    @branch[@list[@index].indent] = command
-    Input.update # Must call Input.update again to avoid extra triggers
-    return true
-  end
-
-  def command_103
-    varnumber=@list[@index].parameters[0]
-    @message_waiting=true
-    params=ChooseNumberParams.new
-    params.setMaxDigits(@list[@index].parameters[1])
-    params.setDefaultValue($game_variables[varnumber])
-    $game_variables[varnumber]=pbChooseNumber(nil,params)
-    $game_map.need_refresh = true if $game_map
-    @message_waiting=false
-    return true
-  end
 end
 
 
@@ -782,7 +274,7 @@ def pbChooseNumber(msgwindow,params)
     cmdwindow.update
     msgwindow.update if msgwindow
     yield if block_given?
-    if Input.trigger?(Input::C)
+    if Input.trigger?(Input::USE)
       ret=cmdwindow.number
       if ret>maximum
         pbPlayBuzzerSE()
@@ -792,7 +284,7 @@ def pbChooseNumber(msgwindow,params)
         pbPlayDecisionSE()
         break
       end
-    elsif Input.trigger?(Input::B)
+    elsif Input.trigger?(Input::BACK)
       pbPlayCancelSE()
       ret=cancelNumber
       break
@@ -808,7 +300,6 @@ end
 #===============================================================================
 #
 #===============================================================================
-=begin
 class FaceWindowVX < SpriteWindow_Base
   def initialize(face)
     super(0,0,128,128)
@@ -843,46 +334,6 @@ class FaceWindowVX < SpriteWindow_Base
     super
   end
 end
-=end
-
-#===================GELA FACE=======================================                             
-    class FaceWindowVXNew < SpriteWindow_Base
-  def initialize(face)
-    super(0,0,192,192)
-    self.windowskin=nil
-    faceinfo=face.split(",")
-    facefile=pbResolveBitmap("Graphics/Faces/"+faceinfo[0])
-    facefile=pbResolveBitmap("Graphics/Pictures/"+faceinfo[0]) if !facefile
-    self.contents.dispose if self.contents
-    @faceIndex=faceinfo[1].to_i
-    @facebitmaptmp=AnimatedBitmap.new(facefile)
-    @facebitmap=BitmapWrapper.new(160,160)
-    @facebitmap.blt(0,0,@facebitmaptmp.bitmap,Rect.new(
-       (@faceIndex % 4) * 160,
-       (@faceIndex / 4) * 160, 160, 160
-    ))
-    self.contents=@facebitmap
-  end
-
-  def update
-    super
-    if @facebitmaptmp.totalFrames>1
-      @facebitmaptmp.update
-      @facebitmap.blt(0,0,@facebitmaptmp.bitmap,Rect.new(
-         (@faceIndex % 4) * 160,
-         (@faceIndex / 4) * 160, 160, 160
-      ))
-    end
-  end
-
-  def dispose
-    @facebitmaptmp.dispose
-    @facebitmap.dispose if @facebitmap
-    super
-	
-  end
-end         
-#==========================GELA FACE==============================
 
 
 
@@ -891,7 +342,7 @@ end
 #===============================================================================
 def pbGetBasicMapNameFromId(id)
   begin
-    map = pbLoadRxData("Data/MapInfos")
+    map = pbLoadMapInfos
     return "" if !map
     return map[id].name
   rescue
@@ -984,7 +435,7 @@ def pbDisplayGoldWindow(msgwindow)
 end
 
 def pbDisplayCoinsWindow(msgwindow,goldwindow)
-  coinString=($PokemonGlobal) ? $PokemonGlobal.coins.to_s_formatted : "0"
+  coinString=($Trainer) ? $Trainer.coins.to_s_formatted : "0"
   coinwindow=Window_AdvancedTextPokemon.new(_INTL("Coins:\n<ar>{1}</ar>",coinString))
   coinwindow.setSkin("Graphics/Windowskins/goldskin")
   coinwindow.resizeToFit(coinwindow.text,Graphics.width)
@@ -998,30 +449,23 @@ def pbDisplayCoinsWindow(msgwindow,goldwindow)
   coinwindow.z=msgwindow.z
   return coinwindow
 end
-#=======GELANAME1==============
 
-# NEW
-def pbDisplayNameWindow(msgwindow,dark,param)
-  namewindow=Window_AdvancedTextPokemon.new(_INTL("<ac>{1}</ac>",param))
-  if dark==true
-    namewindow.setSkin("Graphics/Windowskins/"+MessageConfig::TextSkinName+"xndark")
-    colortag=getSkinColor(msgwindow.windowskin,0,true)
-    namewindow.text=colortag+namewindow.text
-	 else
-    namewindow.setSkin("Graphics/Windowskins/nmbx")				
+def pbDisplayBattlePointsWindow(msgwindow)
+  pointsString = ($Trainer) ? $Trainer.battle_points.to_s_formatted : "0"
+  pointswindow=Window_AdvancedTextPokemon.new(_INTL("Battle Points:\n<ar>{1}</ar>", pointsString))
+  pointswindow.setSkin("Graphics/Windowskins/goldskin")
+  pointswindow.resizeToFit(pointswindow.text,Graphics.width)
+  pointswindow.width=160 if pointswindow.width<=160
+  if msgwindow.y==0
+    pointswindow.y=Graphics.height-pointswindow.height
+  else
+    pointswindow.y=0
   end
+  pointswindow.viewport=msgwindow.viewport
+  pointswindow.z=msgwindow.z
+  return pointswindow
+end
 
-namewindow.resizeToFit(namewindow.text,Graphics.width)
-  namewindow.width=180 if namewindow.width<=180
-  namewindow.width = namewindow.width
-  namewindow.y=msgwindow.y-namewindow.height
-  namewindow.y+=OFFSET_NAMEWINDOW_Y
-  namewindow.x+=OFFSET_NAMEWINDOW_X
-  namewindow.viewport=msgwindow.viewport
-  namewindow.z=msgwindow.z
-  return namewindow
-end							   
-#=======GELANAME1==============						  
 
 
 #===============================================================================
@@ -1051,10 +495,9 @@ def pbCreateMessageWindow(viewport=nil,skin=nil)
   end
   msgwindow.visible=true
   msgwindow.letterbyletter=true
-  #msgwindow.back_opacity=MessageConfig::WindowOpacity
+  msgwindow.back_opacity=MessageConfig::WINDOW_OPACITY
   pbBottomLeftLines(msgwindow,2)
   $game_temp.message_window_showing=true if $game_temp
-  $game_message.visible=true if $game_message
   skin=MessageConfig.pbGetSpeechFrame() if !skin
   msgwindow.setSkin(skin)
   return msgwindow
@@ -1062,7 +505,6 @@ end
 
 def pbDisposeMessageWindow(msgwindow)
   $game_temp.message_window_showing=false if $game_temp
-  $game_message.visible=false if $game_message
   msgwindow.dispose
 end
 
@@ -1076,24 +518,11 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
   oldletterbyletter=msgwindow.letterbyletter
   msgwindow.letterbyletter=(letterbyletter) ? true : false
   ret=nil
-  
-  #=======GELANAME2=======
-	  count=0
-  #=======GELANAME2=======	
-  
   commands=nil
   facewindow=nil
-  #======GELA FACE=================
-  facewindowL=nil
-  facewindowR=nil
-  #=====GELA FACE==================
   goldwindow=nil
   coinwindow=nil
-  
-  #=======GELANAME3=======
-	   namewindow=nil
-  #=======GELANAME3=======	
-  
+  battlepointswindow=nil
   cmdvariable=0
   cmdIfCancel=0
   msgwindow.waitcount=0
@@ -1125,6 +554,15 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
   text.gsub!(/\\pog/i,"")
   text.gsub!(/\\b/i,"<c3=3050C8,D0D0C8>")
   text.gsub!(/\\r/i,"<c3=E00808,D0D0C8>")
+  text.gsub!(/\\[Ww]\[([^\]]*)\]/) {
+    w = $1.to_s
+    if w==""
+      msgwindow.windowskin = nil
+    else
+      msgwindow.setSkin("Graphics/Windowskins/#{w}",false)
+    end
+    next ""
+  }
   isDarkSkin = isDarkWindowskin(msgwindow.windowskin)
   text.gsub!(/\\[Cc]\[([0-9]+)\]/) {
     m = $1.to_i
@@ -1144,9 +582,8 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
     break if text == last_text
   end
   colortag = ""
-  if ($game_message && $game_message.background>0) ||
-     ($game_system && $game_system.respond_to?("message_frame") &&
-      $game_system.message_frame != 0)
+  if $game_system && $game_system.respond_to?("message_frame") &&
+     $game_system.message_frame != 0
     colortag = getSkinColor(msgwindow.windowskin,0,true)
   else
     colortag = getSkinColor(msgwindow.windowskin,0,isDarkSkin)
@@ -1155,10 +592,8 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
   ### Controls
   textchunks=[]
   controls=[]
-  #==========GELA FACE, ADDING PORTRAIT CODES, BASICALLY MR, ML ETC===========
-  while text[/(?:\\(w|f|ff|ts|xn|cl|me|ml|mr|se|wt|wtnp|ch)\[([^\]]*)\]|\\(g|cn|wd|wm|op|cl|wu|\.|\||\!|\^))/i]
+  while text[/(?:\\(f|ff|ts|cl|me|se|wt|wtnp|ch)\[([^\]]*)\]|\\(g|cn|pt|wd|wm|op|cl|wu|\.|\||\!|\^))/i]
     textchunks.push($~.pre_match)
-  #==========GELA FACE, ADDING PORTRAIT CODES===========
     if $~[1]
       controls.push([$~[1].downcase,$~[2],-1])
     else
@@ -1183,7 +618,6 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
     controls[i][2] = textlen
   end
   text = textchunks.join("")
-  unformattedText = toUnformattedText(text)
   signWaitCount = 0
   signWaitTime = Graphics.frame_rate/2
   haveSpecialClose = false
@@ -1201,22 +635,6 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
     when "f"
       facewindow.dispose if facewindow
       facewindow = PictureWindow.new("Graphics/Pictures/#{param}")
-	  
-	#==============GELA FACE=================================================
-    when control=="ml"
-      facewindowL.dispose if facewindowL
-      facewindowL=FaceWindowVXNew.new(param)
-      facewindowL.x=8
-      facewindowL.y=146-32
-    when control=="mr"
-      facewindowR.dispose if facewindowR
-      facewindowR=FaceWindowVXNew.new(param)
-      facewindowR.x=320
-      facewindowR.y=146-32
-  #================GELA FACE==============================================
-	  
-	  
-	  
     when "ff"
       facewindow.dispose if facewindow
       facewindow = FaceWindowVX.new(param)
@@ -1244,25 +662,6 @@ def pbMessageDisplay(msgwindow,message,letterbyletter=true,commandProc=nil)
   end
   ########## Position message window  ##############
   pbRepositionMessageWindow(msgwindow,linecount)
-  if $game_message && $game_message.background==1
-    msgback = IconSprite.new(0,msgwindow.y,msgwindow.viewport)
-    msgback.z = msgwindow.z-1
-    msgback.setBitmap("Graphics/System/MessageBack")
-  end
-  
-  
-  #==============GELA FACE=========================================================
-if facewindowL
-    facewindowL.viewport=msgwindow.viewport
-    facewindowL.z=msgwindow.z
-  end
-  if facewindowR
-    facewindowR.viewport=msgwindow.viewport
-    facewindowR.z=msgwindow.z
-    end
-  #===============GELA FACE========================================================
-  
-  
   if facewindow
     pbPositionNearMsgWindow(facewindow,msgwindow,:left)
     facewindow.viewport = msgwindow.viewport
@@ -1271,9 +670,7 @@ if facewindowL
   atTop = (msgwindow.y==0)
   ########## Show text #############################
   msgwindow.text = text
-  # ===============change this to the framerate your game is using ??
-  Graphics.frame_reset if Graphics.frame_rate>60
- # ===============change this to the framerate your game is using ??
+  Graphics.frame_reset if Graphics.frame_rate>40
   loop do
     if signWaitCount>0
       signWaitCount -= 1
@@ -1289,64 +686,27 @@ if facewindowL
       control = controls[i][0]
       param = controls[i][1]
       case control
-#===========GELANAME4=========
-	  # NEW
-        when "xn"
-          # Show name box, based on #{param}
-          namewindow.dispose if namewindow
-          namewindow=pbDisplayNameWindow(msgwindow,dark=false,param)
-        when "dxn"
-          # Show name box, based on #{param}
-          namewindow.dispose if namewindow
-          namewindow=pbDisplayNameWindow(msgwindow,dark=true,param)
-#===========GELANAME4=========															
       when "f"
         facewindow.dispose if facewindow
         facewindow = PictureWindow.new("Graphics/Pictures/#{param}")
         pbPositionNearMsgWindow(facewindow,msgwindow,:left)
         facewindow.viewport = msgwindow.viewport
         facewindow.z        = msgwindow.z
-		
-		
-		   #====================GELA FACE==================================
-        when "ml" # Mug Shot (Left)
-          facewindowL.dispose if facewindowL
-          facewindowL=FaceWindowVXNew.new(param)
-          facewindowL.windowskin=nil
-          facewindowL.x=8
-          facewindowL.y=146-32
-          facewindowL.viewport=msgwindow.viewport
-          facewindowL.z=msgwindow.z
-        when "mr" # Mug Shot (Right)
-          facewindowR.dispose if facewindowR
-          facewindowR=FaceWindowVXNew.new(param)
-          facewindowR.windowskin=nil
-          facewindowR.x=320
-          facewindowR.y=146-32
-          facewindowR.viewport=msgwindow.viewport
-          facewindowR.z=msgwindow.z
-        #===================GELA FACE===================================
-		
       when "ff"
         facewindow.dispose if facewindow
         facewindow = FaceWindowVX.new(param)
-		
-		#==================GELA FACE==========================
-          facewindow.x=320
-          facewindow.y=146-32
-#==================GELA FACE=======================
-
-
         pbPositionNearMsgWindow(facewindow,msgwindow,:left)
         facewindow.viewport = msgwindow.viewport
         facewindow.z        = msgwindow.z
-		
       when "g"      # Display gold window
         goldwindow.dispose if goldwindow
         goldwindow = pbDisplayGoldWindow(msgwindow)
       when "cn"     # Display coins window
         coinwindow.dispose if coinwindow
         coinwindow = pbDisplayCoinsWindow(msgwindow,goldwindow)
+      when "pt"     # Display battle points window
+        battlepointswindow.dispose if battlepointswindow
+        battlepointswindow = pbDisplayBattlePointsWindow(msgwindow)
       when "wu"
         msgwindow.y = 0
         atTop = true
@@ -1364,12 +724,6 @@ if facewindowL
         msgback.y = msgwindow.y if msgback
         pbPositionNearMsgWindow(facewindow,msgwindow,:left)
         msgwindow.y = Graphics.height-msgwindow.height*(signWaitTime-signWaitCount)/signWaitTime
-      when "w"      # Change windowskin
-        if param==""
-          msgwindow.windowskin = nil
-        else
-          msgwindow.setSkin("Graphics/Windowskins/#{param}",false)
-        end
       when "ts"     # Change text speed
         msgwindow.textspeed = (param=="") ? -999 : param.to_i
       when "."      # Wait 0.25 seconds
@@ -1396,18 +750,11 @@ if facewindowL
     Graphics.update
     Input.update
     facewindow.update if facewindow
-	#===================GELA FACE===============================
-        facewindowL.update if facewindowL
-        facewindowR.update if facewindowR
-#===================GELA FACE===============================
-    if $DEBUG && Input.trigger?(Input::F6)
-      pbRecord(unformattedText)
-    end
     if autoresume && msgwindow.waitcount==0
       msgwindow.resume if msgwindow.busy?
       break if !msgwindow.busy?
     end
-    if Input.trigger?(Input::C) || Input.trigger?(Input::B)
+    if Input.trigger?(Input::USE) || Input.trigger?(Input::BACK)
       if msgwindow.busy?
         pbPlayDecisionSE if msgwindow.pausing?
         msgwindow.resume
@@ -1430,17 +777,9 @@ if facewindowL
     ret=commandProc.call(msgwindow)
   end
   msgback.dispose if msgback
- #======GELANAME5==========
-  # NEW
-  namewindow.dispose if namewindow	 
- #======GELANAME5==========
-  
   goldwindow.dispose if goldwindow
-  #==========GELA FACE===================================
-    facewindowL.dispose if facewindowL
-    facewindowR.dispose if facewindowR
-  #============GELA FACE=================================
   coinwindow.dispose if coinwindow
+  battlepointswindow.dispose if battlepointswindow
   facewindow.dispose if facewindow
   if haveSpecialClose
     pbSEPlay(pbStringToAudioFile(specialCloseSE))
@@ -1514,7 +853,7 @@ def pbShowCommands(msgwindow,commands=nil,cmdIfCancel=0,defaultCmd=0)
     cmdwindow.update
     msgwindow.update if msgwindow
     yield if block_given?
-    if Input.trigger?(Input::B)
+    if Input.trigger?(Input::BACK)
       if cmdIfCancel>0
         command=cmdIfCancel-1
         break
@@ -1523,7 +862,7 @@ def pbShowCommands(msgwindow,commands=nil,cmdIfCancel=0,defaultCmd=0)
         break
       end
     end
-    if Input.trigger?(Input::C)
+    if Input.trigger?(Input::USE)
       command=cmdwindow.index
       break
     end
@@ -1560,7 +899,7 @@ def pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0,defaultCmd=0)
       end
       msgwin.update
       yield if block_given?
-      if Input.trigger?(Input::B)
+      if Input.trigger?(Input::BACK)
         if cmdIfCancel>0
           command=cmdIfCancel-1
           break
@@ -1569,7 +908,7 @@ def pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0,defaultCmd=0)
           break
         end
       end
-      if Input.trigger?(Input::C)
+      if Input.trigger?(Input::USE)
         command=cmdwindow.index
         break
       end
@@ -1594,10 +933,50 @@ def pbMessageWaitForInput(msgwindow,frames,showPause=false)
     Input.update
     msgwindow.update if msgwindow
     pbUpdateSceneMap
-    if Input.trigger?(Input::C) || Input.trigger?(Input::B)
+    if Input.trigger?(Input::USE) || Input.trigger?(Input::BACK)
       break
     end
     yield if block_given?
   end
   msgwindow.stopPause if msgwindow && showPause
+end
+
+def pbFreeText(msgwindow,currenttext,passwordbox,maxlength,width=240)
+  window=Window_TextEntry_Keyboard.new(currenttext,0,0,width,64)
+  ret=""
+  window.maxlength=maxlength
+  window.visible=true
+  window.z=99999
+  pbPositionNearMsgWindow(window,msgwindow,:right)
+  window.text=currenttext
+  window.passwordChar="*" if passwordbox
+  Input.text_input = true
+  loop do
+    Graphics.update
+    Input.update
+    if Input.triggerex?(:ESCAPE)
+      ret=currenttext
+      break
+    elsif Input.triggerex?(:RETURN)
+      ret=window.text
+      break
+    end
+    window.update
+    msgwindow.update if msgwindow
+    yield if block_given?
+  end
+  Input.text_input = false
+  window.dispose
+  Input.update
+  return ret
+end
+
+def pbMessageFreeText(message,currenttext,passwordbox,maxlength,width=240,&block)
+  msgwindow=pbCreateMessageWindow
+  retval=pbMessageDisplay(msgwindow,message,true,
+     proc { |msgwindow|
+       next pbFreeText(msgwindow,currenttext,passwordbox,maxlength,width,&block)
+     },&block)
+  pbDisposeMessageWindow(msgwindow)
+  return retval
 end
