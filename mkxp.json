@@ -210,7 +210,7 @@
     // Set the game window icon to 'path/to/icon.png'
     // (default: none)
     //
-    "iconPath": "icon.png",
+    "iconPath": "/graphics/icons/icon.png",
 
 
     // Instead of playing an RPG Maker game,
